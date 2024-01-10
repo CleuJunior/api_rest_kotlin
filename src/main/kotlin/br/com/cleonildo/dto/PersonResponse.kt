@@ -14,6 +14,6 @@ data class PersonResponse(
         person.firstName,
         person.lastName,
         person.address,
-        person.gender,
+        person.gender.genderValue,
     )
 }

@@ -21,13 +21,14 @@ data class Person (
     var address: String = "",
 
     @Column(nullable = false, length = 6)
-    var gender: String = ""
+    @Enumerated(EnumType.STRING)
+    var gender: Gender
 ) {
 
     constructor(
         firstName: String,
         lastName: String,
         address: String,
-        gender: String
+        gender: Gender
     ) : this(null, firstName, lastName, address, gender)
 }
