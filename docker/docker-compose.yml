@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-container-kotlin
+    environment:
+      MYSQL_DATABASE: kotlin_api
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+        - "3306:3306"
+
+volumes:
+  mysql-data:
