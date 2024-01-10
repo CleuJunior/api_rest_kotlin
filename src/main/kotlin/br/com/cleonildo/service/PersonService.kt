@@ -2,6 +2,7 @@ package br.com.cleonildo.service
 
 import br.com.cleonildo.dto.PersonRequest
 import br.com.cleonildo.dto.PersonResponse
+import br.com.cleonildo.exceptions.ResourceNotFoundException
 import br.com.cleonildo.model.Person
 import br.com.cleonildo.repository.PersonRepository
 import org.springframework.stereotype.Service
@@ -20,21 +21,17 @@ class PersonService(private val repository: PersonRepository) {
     fun findAll(): List<PersonResponse> {
         logger.info("Finding all people!")
 
-        val persons = repository.findAll()
+        return this.repository.findAll()
             .stream()
             .map(::PersonResponse)
             .toList()
-
-        return persons
     }
 
     @Transactional(readOnly = true)
     fun findById(id: Long): PersonResponse {
         logger.info("Finding one person!")
 
-        val person: Person = repository.findById(id)
-            .orElseThrow { RuntimeException(idNotFound) }
-
+        val person: Person = this.findByIdOrThrow(id)
         return PersonResponse(person);
     }
 
@@ -51,21 +48,23 @@ class PersonService(private val repository: PersonRepository) {
     fun update(id: Long, request: PersonRequest) : PersonResponse {
         logger.info("Updating one person with ID ${id}!")
 
-        val person: Person = repository.findById(id)
-            .orElseThrow { RuntimeException(idNotFound) }
+        val person: Person = this.findByIdOrThrow(id)
 
         person.firstName = request.firstName
         person.lastName = request.lastName
         person.address = request.address
         person.gender = request.gender
 
-        return PersonResponse(repository.save(person))
+        return PersonResponse(this.repository.save(person))
     }
 
     fun delete(id: Long) {
         logger.info("Deleting one person with ID $id!")
-        val entity = repository.findById(id)
-            .orElseThrow { RuntimeException(idNotFound) }
-        repository.delete(entity)
+        val entity = this.findByIdOrThrow(id)
+        this.repository.delete(entity)
+    }
+
+    private fun findByIdOrThrow(id: Long): Person {
+        return this.repository.findById(id).orElseThrow { ResourceNotFoundException(idNotFound) }
     }
 }
