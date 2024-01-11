@@ -37,13 +37,10 @@ class PersonService(private val repository: PersonRepository) {
 
     fun create(request: PersonRequest) : PersonResponse {
         logger.info("Creating one person with name ${request.firstName}!")
-        val person: Person = this.toPersonEntity(request)
+        val person: Person = Person(request)
 
         return PersonResponse(this.repository.save(person))
     }
-
-    private fun toPersonEntity(request: PersonRequest) =
-        Person(request.firstName, request.lastName,  request.address, request.gender)
 
     fun update(id: Long, request: PersonRequest) : PersonResponse {
         logger.info("Updating one person with ID ${id}!")
